@@ -17,7 +17,7 @@ class JsonDb {
 
     public function __construct($path) {
         if (is_dir($path)) $this->path = $path;
-        else throw new Exception("JsonDB Error: Path not found");
+        else throw new \Exception("JsonDB Error: Path not found");
     }
 
     protected function getTableInstance($table) {
@@ -26,10 +26,10 @@ class JsonDb {
     }
 
     public function __call($op, $args) {
-        if ($args && method_exists("JsonTable", $op)) {
+        if ($args && method_exists('\JsonDb\JsonTable', $op)) {
             $table = $args[0].$this->fileExt;
             return $this->getTableInstance($table)->$op($args);
-        } else throw new Exception("JsonDB Error: Unknown method or wrong arguments ");
+        } else throw new \Exception("JsonDB Error: Unknown method or wrong arguments ");
     }
 
     public function setExtension($_fileExt) {
