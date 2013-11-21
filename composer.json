@@ -1,7 +1,7 @@
 {
     "name": "dav-m85/json-db",
     "type": "library",
-    "description": "Use a json file as a database",
+    "description": "Use a json file as a document oriented database",
     "keywords": ["json","database"],
     "homepage": "http://github.com/dav-m85/json-db",
     "license": "MIT",

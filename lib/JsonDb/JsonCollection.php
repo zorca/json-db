@@ -10,51 +10,91 @@
 namespace JsonDb;
 
 
-class JsonTable {
-    protected $jsonFile;
+class JsonCollection
+{
+    /**
+     * @var string Path.
+     */
+    protected $filepath;
+
     protected $fileHandle;
-    protected $fileData = array();
+    protected $data = array();
 
-    public function __construct($_jsonFile) {
-        $this->jsonFile = $_jsonFile;
+    function __construct($filepath)
+    {
+        $this->filepath = $filepath;
 
-        if (file_exists($_jsonFile)) {
-            $this->fileData = json_decode(file_get_contents($this->jsonFile), true);
-
+        if (file_exists($filepath)) {
+            if(! is_writeable($filepath)){
+                throw new JsonDbException('Collection file is not writeable');
+            }
+            $this->data = json_decode(file_get_contents($this->filepath), true);
         }
         else{
-            touch($_jsonFile);
-            $this->fileData = array();
+            if(! touch($filepath)){
+                throw new JsonDbException('Cannot create new collection');
+            }
+            $this->data = array();
         }
+
         $this->lockFile();
-        //else throw new \Exception("JsonTable Error: File not found: ".$_jsonFile);
     }
 
-    public function __destruct() {
-        $this->save();
-        fclose($this->fileHandle);
+    public function __destruct()
+    {
+        if(! is_null($this->data)){
+            $this->flush();
+            fclose($this->fileHandle);
+        }
     }
+
+    /**
+     * Removes all data associated to collection.
+     */
+    public function drop()
+    {
+        $this->data = null;
+        fclose($this->fileHandle);
+        unlink($this->filepath);
+    }
+
+    /**
+     * @return string Path to the database collection file.
+     */
+    function getFilePath()
+    {
+        return $this->filepath;
+    }
+
+
 
     protected function lockFile() {
-        $handle = fopen($this->jsonFile, "w");
+        $handle = fopen($this->filepath, "w");
         if (flock($handle, LOCK_EX)) $this->fileHandle = $handle;
-        else throw new \Exception("JsonTable Error: Can't set file-lock");
+        else throw new \Exception("JsonCollection Error: Can't set file-lock");
     }
 
-    protected function save() {
-        if (fwrite($this->fileHandle, json_encode($this->fileData))) return true;
-        else throw new \Exception("JsonTable Error: Can't write data to: ".$this->jsonFile);
+    /**
+     * Write all pending data to file.
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    function flush()
+    {
+        if (fwrite($this->fileHandle, json_encode($this->data))) return true;
+        else throw new \Exception("JsonCollection Error: Can't write data to: ".$this->filepath);
     }
 
     public function selectAll() {
-        return $this->fileData;
+        return $this->data;
     }
 
     public function select($key, $val = 0) {
         $result = array();
         if (is_array($key)) $result = $this->select($key[1], $key[2]);
         else {
-            $data = $this->fileData;
+            $data = $this->data;
             foreach($data as $_key => $_val) {
                 if (isset($data[$_key][$key])) {
                     if ($data[$_key][$key] == $val) {
@@ -67,15 +107,15 @@ class JsonTable {
     }
 
     public function updateAll($data = array()) {
-        if (isset($data[0]) && substr_compare($data[0],$this->jsonFile,0)) $data = $data[1];
-        return $this->fileData = array($data);
+        if (isset($data[0]) && substr_compare($data[0],$this->filepath,0)) $data = $data[1];
+        return $this->data = array($data);
     }
 
     public function update($key, $val = 0, $newData = array()) {
         $result = false;
         if (is_array($key)) $result = $this->update($key[1], $key[2], $key[3]);
         else {
-            $data = $this->fileData;
+            $data = $this->data;
             foreach($data as $_key => $_val) {
                 if (isset($data[$_key][$key])) {
                     if ($data[$_key][$key] == $val) {
@@ -85,19 +125,19 @@ class JsonTable {
                     }
                 }
             }
-            if ($result) $this->fileData = $data;
+            if ($result) $this->data = $data;
         }
         return $result;
     }
 
     public function insert($data = array()) {
-        if (isset($data[0]) && substr_compare($data[0],$this->jsonFile,0)) $data = $data[1];
-        $this->fileData[] = $data;
+        if (isset($data[0]) && substr_compare($data[0],$this->filepath,0)) $data = $data[1];
+        $this->data[] = $data;
         return true;
     }
 
     public function deleteAll() {
-        $this->fileData = array();
+        $this->data = array();
         return true;
     }
 
@@ -105,7 +145,7 @@ class JsonTable {
         $result = 0;
         if (is_array($key)) $result = $this->delete($key[1], $key[2]);
         else {
-            $data = $this->fileData;
+            $data = $this->data;
             foreach($data as $_key => $_val) {
                 if (isset($data[$_key][$key])) {
                     if ($data[$_key][$key] == $val) {
@@ -116,7 +156,7 @@ class JsonTable {
             }
             if ($result) {
                 sort($data);
-                $this->fileData = $data;
+                $this->data = $data;
             }
         }
         return $result;

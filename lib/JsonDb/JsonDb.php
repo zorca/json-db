@@ -1,39 +1,70 @@
 <?php
 /**
  * Created by JetBrains PhpStorm.
- * User: david
+ * User: dav-m85
  * Date: 17/11/13
  * Time: 00:07
- * To change this template use File | Settings | File Templates.
  */
 
 namespace JsonDb;
 
 
-class JsonDb {
-    protected $path = "./";
-    protected $fileExt = ".json";
-    protected $tables = array();
+class JsonDb
+{
+    protected $path;
+    protected $extension = ".json";
+    protected $collections = array();
 
-    public function __construct($path) {
-        if (is_dir($path)) $this->path = $path;
-        else throw new \Exception("JsonDB Error: Path not found");
+    public function __construct($path)
+    {
+        // Check that path suits our needs
+        $path = realpath($path);
+        if (! is_dir($path)){
+            throw new JsonDbException('Path not found');
+
+        }
+        if (! is_writeable($path)){
+            throw new JsonDbException('Path not writeable');
+        }
+
+        $this->path = $path;
     }
 
-    protected function getTableInstance($table) {
-        if (isset($tables[$table])) return $tables[$table];
-        else return $tables[$table] = new JsonTable($this->path.$table);
+    /**
+     * Get a collection.
+     *
+     * @param string $name Collection name.
+     * @return JsonCollection
+     */
+    function getCollection($name)
+    {
+        if (! isset($this->collections[$name])){
+            $filepath = $this->path . DIRECTORY_SEPARATOR . $name . $this->extension;
+            $this->collections[$name] = new JsonCollection($filepath);
+        }
+        return $this->collections[$name];
     }
 
-    public function __call($op, $args) {
-        if ($args && method_exists('\JsonDb\JsonTable', $op)) {
-            $table = $args[0].$this->fileExt;
-            return $this->getTableInstance($table)->$op($args);
-        } else throw new \Exception("JsonDB Error: Unknown method or wrong arguments ");
+    /**
+     * Proxy for getCollection.
+     *
+     * @param $name
+     * @return JsonCollection
+     */
+    function __get($name)
+    {
+        return $this->getCollection($name);
     }
 
-    public function setExtension($_fileExt) {
-        $this->fileExt = $_fileExt;
+    /**
+     * Sets the json files extension.
+     *
+     * @param string $extension
+     * @return $this Fluent interface.
+     */
+    function setExtension($extension)
+    {
+        $this->extension = $extension;
         return $this;
     }
 }
