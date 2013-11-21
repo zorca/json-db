@@ -80,7 +80,7 @@ class JsonCollection
      * @return bool
      * @throws \Exception
      */
-    function flush()
+    protected function flush()
     {
         if (fwrite($this->fileHandle, json_encode($this->data))) return true;
         else throw new \Exception("JsonCollection Error: Can't write data to: ".$this->filepath);

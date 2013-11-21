@@ -50,13 +50,14 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
         $data = array('foo' => 'bar');
         $dut->insert($data);
 
-        $dut->flush();
         unset($dut);
 
         // Can we retrieve it ?
         $dut2 = new \JsonDb\JsonCollection($this->testPath);
         $data2 = $dut2->selectAll();
 
-        $this->assertSame($data, $data2);
+        $this->assertTrue(is_array($data2));
+        $this->assertEquals(1, count($data2));
+        $this->assertSame($data, $data2[0]);
     }
 }
