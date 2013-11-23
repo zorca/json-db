@@ -95,23 +95,19 @@ class JsonCollection
             return $this->data;
         }
 
-        throw new \Exception('not implemented yet');
+        $filter = new FilterBuilder($condition);
 
-
-        $result = array();
-        if (is_array($key)) $result = $this->select($key[1], $key[2]);
-        else {
-            $data = $this->data;
-            foreach($data as $_key => $_val) {
-                if (isset($data[$_key][$key])) {
-                    if ($data[$_key][$key] == $val) {
-                        $result[] = $data[$_key];
-                    }
-                }
+        $results = array();
+        foreach($this->data as $d){
+            if($filterg->match($d)){
+                array_push($results, $d);
             }
         }
-        return $result;
+
+        return $results;
     }
+
+
 
     public function updateAll($data = array()) {
         if (isset($data[0]) && substr_compare($data[0],$this->filepath,0)) $data = $data[1];
