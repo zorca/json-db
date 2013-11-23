@@ -42,6 +42,11 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(file_exists($this->testPath));
     }
 
+    function testInsertNotArray()
+    {
+        $this->markTestIncomplete('Shall implement');
+    }
+
     function testInsert()
     {
         $dut = new \JsonDb\JsonCollection($this->testPath);
@@ -50,14 +55,47 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
         $data = array('foo' => 'bar');
         $dut->insert($data);
 
+        $this->assertTrue(isset($data['_id']), 'Got no new Id');
+
         unset($dut);
+    }
 
-        // Can we retrieve it ?
-        $dut2 = new \JsonDb\JsonCollection($this->testPath);
-        $data2 = $dut2->selectAll();
+    /**
+     * @depends testInsert
+     */
+    function testFindWithoutCondition()
+    {
+        $dut = new \JsonDb\JsonCollection($this->testPath);
 
-        $this->assertTrue(is_array($data2));
-        $this->assertEquals(1, count($data2));
-        $this->assertSame($data, $data2[0]);
+        $data = $dut->find();
+
+        $this->assertTrue(is_array($data));
+        $this->assertEquals(1, count($data));
+        $this->assertContains('foo', array_keys($data[0]));
+    }
+
+    function testFind()
+    {
+        $this->markTestIncomplete('Shall implement');
+    }
+
+    function testRemoveWithoutCondition()
+    {
+        $this->markTestIncomplete('Shall implement');
+    }
+
+    function testRemove()
+    {
+        $this->markTestIncomplete('Shall implement');
+    }
+
+    function testUpdateWithoutCondition()
+    {
+        $this->markTestIncomplete('Shall implement');
+    }
+
+    function testUpdate()
+    {
+        $this->markTestIncomplete('Shall implement');
     }
 }

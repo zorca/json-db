@@ -18,6 +18,7 @@ class JsonCollection
     protected $filepath;
 
     protected $fileHandle;
+
     protected $data = array();
 
     function __construct($filepath)
@@ -37,14 +38,13 @@ class JsonCollection
             $this->data = array();
         }
 
-        $this->lockFile();
+        // $this->lockFile(); //Not necessary !!!
     }
 
     public function __destruct()
     {
         if(! is_null($this->data)){
             $this->flush();
-            fclose($this->fileHandle);
         }
     }
 
@@ -54,7 +54,6 @@ class JsonCollection
     public function drop()
     {
         $this->data = null;
-        fclose($this->fileHandle);
         unlink($this->filepath);
     }
 
@@ -66,14 +65,6 @@ class JsonCollection
         return $this->filepath;
     }
 
-
-
-    protected function lockFile() {
-        $handle = fopen($this->filepath, "w");
-        if (flock($handle, LOCK_EX)) $this->fileHandle = $handle;
-        else throw new \Exception("JsonCollection Error: Can't set file-lock");
-    }
-
     /**
      * Write all pending data to file.
      *
@@ -82,15 +73,31 @@ class JsonCollection
      */
     protected function flush()
     {
+        $handle = fopen($this->filepath, "w");
+        if (flock($handle, LOCK_EX)) $this->fileHandle = $handle;
+        else throw new \Exception("JsonCollection Error: Can't set file-lock");
+
         if (fwrite($this->fileHandle, json_encode($this->data))) return true;
         else throw new \Exception("JsonCollection Error: Can't write data to: ".$this->filepath);
+
+        fclose($this->fileHandle);
     }
 
-    public function selectAll() {
-        return $this->data;
-    }
+    /**
+     * Find a document inside the collection.
+     *
+     * @param null $condition
+     * @return array
+     */
+    function find($condition = null)
+    {
+        if(is_null($condition)){
+            return $this->data;
+        }
 
-    public function select($key, $val = 0) {
+        throw new \Exception('not implemented yet');
+
+
         $result = array();
         if (is_array($key)) $result = $this->select($key[1], $key[2]);
         else {
@@ -130,10 +137,31 @@ class JsonCollection
         return $result;
     }
 
-    public function insert($data = array()) {
-        if (isset($data[0]) && substr_compare($data[0],$this->filepath,0)) $data = $data[1];
-        $this->data[] = $data;
-        return true;
+    /**
+     * Insert a document into collection.
+     *
+     * Autmatically adds an _id to the array, mongodb style.
+     *
+     * @param array $data
+     * @return $this
+     */
+    function insert(array &$data = array())
+    {
+        // Check new object
+        if(isset($data['_id'])){
+            throw new JsonDbException('This object was already persisted !');
+        }
+
+        // Compute _id for the document and adds it
+        $_id = substr(md5(time()), 0, 6);
+        $data['_id'] = $_id;
+
+        // @todo Register the atomic operation
+
+        array_push($this->data, $data);
+        // Flush the collection  (insert as soon as possible)
+
+        return $this;
     }
 
     public function deleteAll() {
