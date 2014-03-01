@@ -1,9 +1,9 @@
 #json-db
 
-json-db is a document oriented database using json files as storage. It is *not* concurrency proof, so I wouldn't use
-it in heavy production environnements if I were you. Database's size is also a matter.
+json-db is a document oriented database using json files as storage.
 
-This said, json-db can proove usefull in some cases.
+It tries to implement concurrency proofness with unit of work mechanism, but has not been tested yet in heavy
+load environments. Documents are retrieved with a query pattern.
 
 [![Build Status](https://travis-ci.org/dav-m85/json-db.png?branch=master)](https://travis-ci.org/dav-m85/json-db)
 
@@ -20,34 +20,38 @@ make build
 
 ```php
 use JsonDb\JsonDb;
-    use JsonDb\JsonCollection;
+use JsonDb\JsonCollection;
 
-    $db = new JsonDb('somewhere/in/your/filesystem');
+$db = new JsonDb('some/dir/in/your/filesystem');
 
-    // Lets get a collection
+// Lets get a collection
 
-    $test = $db->getCollection('test');
-    $test = $db->test; // That's the same
+$test = $db->getCollection('test');
+$test = $db->test; // That's the same
 
-    // Insert something
-    $something = array('foo' => 'bar');
-    $test->insert($something); // Adds a _id to $something, mongo style.
+// Insert something
+$something = array('foo' => 'bar');
+$test->insert($something); // Adds a _id to $something, mongo style.
 
-    // Get all documents
-    $all = $test->find();
+// Get all documents
+$all = $test->find();
 
-    // Get one or more documents with condition
-    $some = $test->find(array('foo' => 'bar')); // That's a And condition
+// Get one or more documents with condition
+$some = $test->find(Query::match('foo','bar'));
+$some = $test->find(Query::match('foo','bar')->or(Query::match('yay', 'blah')));
 
-    // Update a record
-    $something['aze'] = 'rty';
-    $test->update($something);
+// Update a record
+$something['aze'] = 'rty';
+$test->update(Query::match('foo','bar'), $something);
 
-    // If you want to update insert, use save
-    $test->save($something);
+// Deleting a record works the same way
+$test->update(Query::match('foo','bar'));
 
-    // When you're done, drop the collection erases it all.
-    $test->drop();
+// If you want flush changes to filesystem, just use flush
+$test->flush();
+
+// When you're done, drop the collection erases it all.
+$test->drop();
 ```
 
 ## Contributing
