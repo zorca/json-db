@@ -1,19 +1,21 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: dav-m85
- * Date: 17/11/13
- * Time: 00:07
- */
 
 namespace JsonDb;
 
+/**
+ * Manage Collections.
+ *
+ * @package JsonDb
+ */
 class JsonDb
 {
     protected $path;
     protected $extension = ".json";
     protected $collections = array();
 
+    /**
+     * @param $path Directory where to store collection files.
+     */
     public function __construct($path)
     {
         // Check that path suits our needs
@@ -60,7 +62,7 @@ class JsonDb
      * Sets the json files extension.
      *
      * @param  string $extension
-     * @return $this  Fluent interface.
+     * @return $this Fluent interface.
      */
     public function setExtension($extension)
     {

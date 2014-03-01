@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: david
- * Date: 17/11/13
- * Time: 00:27
- * To change this template use File | Settings | File Templates.
- */
 
 class JsonCollectionTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,23 +9,27 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
         $this->testPath = sys_get_temp_dir() . '/test.json';
     }
 
-    function deleteTestFixture()
+    function tearDown()
     {
         if(file_exists($this->testPath)){
             unlink($this->testPath);
         }
     }
 
+    /**
+     * Unknown path return exception
+     */
     function testNotExistingPathException()
     {
         $this->setExpectedException('\Exception');
-        $dut = new \JsonDb\JsonCollection('this/path/does/not/exists');
+        new \JsonDb\JsonCollection('this/path/does/not/exists');
     }
 
+    /**
+     * Construction is ok
+     */
     function testConstructAndDrop()
     {
-        $this->deleteTestFixture();
-
         // Lets create a collection...
         $dut = new \JsonDb\JsonCollection($this->testPath);
         $this->assertTrue(file_exists($this->testPath));
@@ -42,11 +39,9 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(file_exists($this->testPath));
     }
 
-    function testInsertNotArray()
-    {
-        $this->markTestIncomplete('Shall implement');
-    }
-
+    /**
+     * Insertion is ok
+     */
     function testInsert()
     {
         $dut = new \JsonDb\JsonCollection($this->testPath);
@@ -65,7 +60,10 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
      */
     function testFindWithoutCondition()
     {
+        $test = array('foo' => 'bar');
+
         $dut = new \JsonDb\JsonCollection($this->testPath);
+        $dut->insert($test);
 
         $data = $dut->find();
 
@@ -74,17 +72,20 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('foo', array_keys($data[0]));
     }
 
+    /**
+     * @depends testInsert
+     */
     function testFind()
     {
         $this->markTestIncomplete('Shall implement');
     }
 
-    function testRemoveWithoutCondition()
+    function testDeleteWithoutCondition()
     {
         $this->markTestIncomplete('Shall implement');
     }
 
-    function testRemove()
+    function testDelete()
     {
         $this->markTestIncomplete('Shall implement');
     }
