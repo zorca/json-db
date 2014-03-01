@@ -77,26 +77,84 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
      */
     function testFind()
     {
-        $this->markTestIncomplete('Shall implement');
+        $test = array('foo' => 'bar');
+        $test2= array('aze' => 'rty');
+
+        $dut = new \JsonDb\JsonCollection($this->testPath);
+        $dut->insert($test);
+        $dut->insert($test2);
+
+        $data = $dut->find(\JsonDb\Query\Query::equals('aze', 'rty'));
+
+        $this->assertTrue(is_array($data));
+        $this->assertEquals(1, count($data));
+        $this->assertContains('aze', array_keys($data[0]));
     }
 
     function testDeleteWithoutCondition()
     {
-        $this->markTestIncomplete('Shall implement');
+        $test = array('foo' => 'bar');
+        $test2= array('aze' => 'rty');
+
+        $dut = new \JsonDb\JsonCollection($this->testPath);
+        $dut->insert($test);
+        $dut->insert($test2);
+
+        $dut->delete();
+        $data = $dut->find();
+
+        $this->assertTrue(is_array($data));
+        $this->assertEquals(0, count($data));
     }
 
     function testDelete()
     {
-        $this->markTestIncomplete('Shall implement');
+        $test = array('foo' => 'bar');
+        $test2= array('aze' => 'rty');
+
+        $dut = new \JsonDb\JsonCollection($this->testPath);
+        $dut->insert($test);
+        $dut->insert($test2);
+
+        $dut->delete(\JsonDb\Query\Query::equals('aze', 'rty'));
+        $data = $dut->find(\JsonDb\Query\Query::equals('aze', 'rty'));
+
+        $this->assertTrue(is_array($data));
+        $this->assertEquals(0, count($data));
     }
 
     function testUpdateWithoutCondition()
     {
-        $this->markTestIncomplete('Shall implement');
+        $test = array('foo' => 'bar');
+        $test2= array('aze' => 'rty');
+
+        $dut = new \JsonDb\JsonCollection($this->testPath);
+        $dut->insert($test);
+        $dut->insert($test2);
+
+        $dut->update(null, array('aze' => 'grr'));
+        $data = $dut->find();
+
+        $this->assertContains('aze', array_keys($data[0]));
+        $this->assertSame('grr', $data[0]['aze']);
+        $this->assertContains('aze', array_keys($data[1]));
+        $this->assertSame('grr', $data[1]['aze']);
     }
 
     function testUpdate()
     {
-        $this->markTestIncomplete('Shall implement');
+        $test = array('foo' => 'bar');
+        $test2= array('aze' => 'rty');
+
+        $dut = new \JsonDb\JsonCollection($this->testPath);
+        $dut->insert($test);
+        $dut->insert($test2);
+
+        $dut->update(\JsonDb\Query\Query::equals('aze', 'rty'), array('aze' => 'grr'));
+        $data = $dut->find(\JsonDb\Query\Query::equals('aze', 'grr'));
+
+        $this->assertTrue(is_array($data));
+        $this->assertEquals(1, count($data));
+        $this->assertContains('aze', array_keys($data[0]));
     }
 }
