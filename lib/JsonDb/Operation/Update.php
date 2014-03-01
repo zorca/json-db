@@ -2,7 +2,7 @@
 
 namespace JsonDb\Operation;
 
-use JsonDb\Query\QueryDummy;
+use JsonDb\Query\QueryAny;
 use JsonDb\Query\QueryInterface;
 
 class Update implements OperationInterface
@@ -13,7 +13,7 @@ class Update implements OperationInterface
     public function __construct(QueryInterface $query = null, $value)
     {
         if(is_null($query)){
-            $query = new QueryDummy(true); // match all
+            $query = new QueryAny(true); // match all
         }
         $this->query = $query;
         $this->value = $value;
