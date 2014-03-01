@@ -1,20 +1,17 @@
-README
-======
+#json-db
 
-What is json-db
------------------
-*json-db* is a document oriented database using json files as storage. It is *not* concurrency proof, so I wouldn't use
+json-db is a document oriented database using json files as storage. It is *not* concurrency proof, so I wouldn't use
 it in heavy production environnements if I were you. Database's size is also a matter.
 
-This said, *json-db* can proove usefull in some cases.
+This said, json-db can proove usefull in some cases.
 
-Requirements
-------------
+[![Build Status](https://travis-ci.org/dav-m85/json-db.png?branch=master)](https://travis-ci.org/dav-m85/json-db)
+
+## Requirements
 
 gnu make, php5.3, prophecy
 
-Usage
-------------
+## Usage
 
 Copy config.ini.dist to config.ini, and setup the correct key values (you need a github API access token).
 ```bash
@@ -53,8 +50,7 @@ use JsonDb\JsonDb;
     $test->drop();
 ```
 
-Contributing
-------------
+## Contributing
 
 You can contribute in various ways :
 
@@ -68,19 +64,18 @@ Note that this project is following [Semantic Versioning 2.0.0](http://semver.or
 
 You like this project ? Fork it, star it, talk about it !
 
-Testing
-----------------------
+## Testing
 
 In a (nut)shell :
 ```bash
 make test
 ```
 
-Credits
--------
+## Credits
+
 Maintainer : [dav-m85](http://github.com/dav-m85)
 Contributors : you ?
 
-License
--------
+## License
+
 *json-db* uses the MIT license. A copy can be found inside the project, or at http://opensource.org/licenses/mit-license.php
