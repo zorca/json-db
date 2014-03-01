@@ -22,7 +22,7 @@ class FilterBuilder
      *
      * @param $condition
      */
-    function __construct(array $condition)
+    public function __construct(array $condition)
     {
         $this->condition = $condition;
     }
@@ -31,9 +31,9 @@ class FilterBuilder
      * @param $data
      * @return bool True if match, false if not.
      */
-    function match($data)
+    public function match($data)
     {
-        foreach($this->condition as $key => $value){
+        foreach ($this->condition as $key => $value) {
             if(
                 (! isset($data[$key])) // got the key ?
                 ||

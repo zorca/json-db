@@ -8,7 +8,6 @@
 
 namespace JsonDb;
 
-
 class JsonDb
 {
     protected $path;
@@ -19,11 +18,11 @@ class JsonDb
     {
         // Check that path suits our needs
         $path = realpath($path);
-        if (! is_dir($path)){
+        if (! is_dir($path)) {
             throw new JsonDbException('Path not found');
 
         }
-        if (! is_writeable($path)){
+        if (! is_writeable($path)) {
             throw new JsonDbException('Path not writeable');
         }
 
@@ -33,15 +32,16 @@ class JsonDb
     /**
      * Get a collection.
      *
-     * @param string $name Collection name.
+     * @param  string         $name Collection name.
      * @return JsonCollection
      */
-    function getCollection($name)
+    public function getCollection($name)
     {
-        if (! isset($this->collections[$name])){
+        if (! isset($this->collections[$name])) {
             $filepath = $this->path . DIRECTORY_SEPARATOR . $name . $this->extension;
             $this->collections[$name] = new JsonCollection($filepath);
         }
+
         return $this->collections[$name];
     }
 
@@ -51,7 +51,7 @@ class JsonDb
      * @param $name
      * @return JsonCollection
      */
-    function __get($name)
+    public function __get($name)
     {
         return $this->getCollection($name);
     }
@@ -59,12 +59,13 @@ class JsonDb
     /**
      * Sets the json files extension.
      *
-     * @param string $extension
-     * @return $this Fluent interface.
+     * @param  string $extension
+     * @return $this  Fluent interface.
      */
-    function setExtension($extension)
+    public function setExtension($extension)
     {
         $this->extension = $extension;
+
         return $this;
     }
 }

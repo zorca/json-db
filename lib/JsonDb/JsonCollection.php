@@ -9,7 +9,6 @@
 
 namespace JsonDb;
 
-
 class JsonCollection
 {
     /**
@@ -21,18 +20,17 @@ class JsonCollection
 
     protected $data = array();
 
-    function __construct($filepath)
+    public function __construct($filepath)
     {
         $this->filepath = $filepath;
 
         if (file_exists($filepath)) {
-            if(! is_writeable($filepath)){
+            if (! is_writeable($filepath)) {
                 throw new JsonDbException('Collection file is not writeable');
             }
             $this->data = json_decode(file_get_contents($this->filepath), true);
-        }
-        else{
-            if(! touch($filepath)){
+        } else {
+            if (! touch($filepath)) {
                 throw new JsonDbException('Cannot create new collection');
             }
             $this->data = array();
@@ -43,7 +41,7 @@ class JsonCollection
 
     public function __destruct()
     {
-        if(! is_null($this->data)){
+        if (! is_null($this->data)) {
             $this->flush();
         }
     }
@@ -60,7 +58,7 @@ class JsonCollection
     /**
      * @return string Path to the database collection file.
      */
-    function getFilePath()
+    public function getFilePath()
     {
         return $this->filepath;
     }
@@ -86,20 +84,20 @@ class JsonCollection
     /**
      * Find a document inside the collection.
      *
-     * @param null $condition
+     * @param  null  $condition
      * @return array
      */
-    function find($condition = null)
+    public function find($condition = null)
     {
-        if(is_null($condition)){
+        if (is_null($condition)) {
             return $this->data;
         }
 
         $filter = new FilterBuilder($condition);
 
         $results = array();
-        foreach($this->data as $d){
-            if($filterg->match($d)){
+        foreach ($this->data as $d) {
+            if ($filterg->match($d)) {
                 array_push($results, $d);
             }
         }
@@ -107,19 +105,19 @@ class JsonCollection
         return $results;
     }
 
-
-
-    public function updateAll($data = array()) {
+    public function updateAll($data = array())
+    {
         if (isset($data[0]) && substr_compare($data[0],$this->filepath,0)) $data = $data[1];
         return $this->data = array($data);
     }
 
-    public function update($key, $val = 0, $newData = array()) {
+    public function update($key, $val = 0, $newData = array())
+    {
         $result = false;
         if (is_array($key)) $result = $this->update($key[1], $key[2], $key[3]);
         else {
             $data = $this->data;
-            foreach($data as $_key => $_val) {
+            foreach ($data as $_key => $_val) {
                 if (isset($data[$_key][$key])) {
                     if ($data[$_key][$key] == $val) {
                         $data[$_key] = $newData;
@@ -130,6 +128,7 @@ class JsonCollection
             }
             if ($result) $this->data = $data;
         }
+
         return $result;
     }
 
@@ -138,13 +137,13 @@ class JsonCollection
      *
      * Autmatically adds an _id to the array, mongodb style.
      *
-     * @param array $data
+     * @param  array $data
      * @return $this
      */
-    function insert(array &$data = array())
+    public function insert(array &$data = array())
     {
         // Check new object
-        if(isset($data['_id'])){
+        if (isset($data['_id'])) {
             throw new JsonDbException('This object was already persisted !');
         }
 
@@ -156,21 +155,23 @@ class JsonCollection
 
         array_push($this->data, $data);
         // Flush the collection  (insert as soon as possible)
-
         return $this;
     }
 
-    public function deleteAll() {
+    public function deleteAll()
+    {
         $this->data = array();
+
         return true;
     }
 
-    public function delete($key, $val = 0) {
+    public function delete($key, $val = 0)
+    {
         $result = 0;
         if (is_array($key)) $result = $this->delete($key[1], $key[2]);
         else {
             $data = $this->data;
-            foreach($data as $_key => $_val) {
+            foreach ($data as $_key => $_val) {
                 if (isset($data[$_key][$key])) {
                     if ($data[$_key][$key] == $val) {
                         unset($data[$_key]);
@@ -183,6 +184,7 @@ class JsonCollection
                 $this->data = $data;
             }
         }
+
         return $result;
     }
 }
