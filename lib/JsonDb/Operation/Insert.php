@@ -4,7 +4,7 @@ namespace JsonDb\Operation;
 
 use JsonDb\JsonDbException;
 
-class Insert
+class Insert implements OperationInterface
 {
     protected $toBeInserted;
 

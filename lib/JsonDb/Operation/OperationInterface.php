@@ -8,5 +8,5 @@ namespace JsonDb\Operation;
  * @package JsonDb\Operation
  */
 interface OperationInterface {
-    public function execute(array $data);
+    public function execute(array &$collection);
 }
