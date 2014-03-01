@@ -102,7 +102,7 @@ class JsonCollection
      * @return bool
      * @throws \Exception
      */
-    protected function flush()
+    public function flush()
     {
         $this->refresh();
 

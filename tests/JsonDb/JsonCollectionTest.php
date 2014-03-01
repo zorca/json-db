@@ -157,4 +157,21 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($data));
         $this->assertContains('aze', array_keys($data[0]));
     }
+
+    function testFlush()
+    {
+        $test = array('foo' => 'bar');
+        $test2= array('aze' => 'rty');
+
+        $collection = new \JsonDb\JsonCollection($this->testPath);
+        $collection->insert($test);
+        $collection->insert($test2);
+        $collection->flush();
+
+        $dut = new \JsonDb\JsonCollection($this->testPath);
+        $data = $dut->find();
+
+        $this->assertTrue(is_array($data));
+        $this->assertEquals(2, count($data));
+    }
 }
