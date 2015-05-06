@@ -46,12 +46,12 @@ class JsonCollection
 
         // Create collection file and retrieve data.
         if (file_exists($path)) {
-            if (! is_writeable($path)) {
+            if (! @is_writeable($path)) {
                 throw new JsonDbException('Collection file is not writeable');
             }
             $this->refresh();
         } else {
-            if (! touch($path)) {
+            if (! @touch($path)) {
                 throw new JsonDbException('Cannot create new collection');
             }
             $this->data = array();
@@ -89,7 +89,8 @@ class JsonCollection
      */
     public function refresh()
     {
-        $data = json_decode(file_get_contents($this->path), true);
+        $raw = file($this->path);
+        $data = array_map(function($rawDatum){return json_decode($rawDatum, true);}, $raw);
         if(empty($data)){
             $data = array();
         }
@@ -113,10 +114,13 @@ class JsonCollection
         $handle = fopen($this->path, "w");
         try{
             if (! flock($handle, LOCK_EX))
-                throw new \Exception("JsonCollection Error: Can't set file-lock");
+                throw new JsonDbException("JsonCollection Error: Can't set file-lock");
 
-            if (! fwrite($handle, json_encode($this->data)))
-                throw new \Exception("JsonCollection Error: Can't write data to: ".$this->path);
+            // Prepare data to be written
+            $raw = array_map(function($datum){return json_encode($datum);}, $this->data);
+
+            if (false === fwrite($handle, implode(PHP_EOL, $raw)))
+                throw new JsonDbException("JsonCollection Error: Can't write data to: ".$this->path);
         }
         catch(\Exception $e){
             fclose($handle);

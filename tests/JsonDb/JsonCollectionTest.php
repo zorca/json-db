@@ -21,7 +21,7 @@ class JsonCollectionTest extends \PHPUnit_Framework_TestCase
      */
     function testNotExistingPathException()
     {
-        $this->setExpectedException('\Exception');
+        $this->setExpectedException('\JsonDb\JsonDbException');
         new \JsonDb\JsonCollection('this/path/does/not/exists');
     }
 
