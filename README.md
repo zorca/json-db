@@ -1,6 +1,7 @@
 #json-db
 
 [![Build Status](https://travis-ci.org/dav-m85/json-db.png?branch=master)](https://travis-ci.org/dav-m85/json-db)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dav-m85/json-db/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dav-m85/json-db/?branch=master)
 
 json-db is a document oriented database using json files as storage.
 
