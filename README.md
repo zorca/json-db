@@ -46,7 +46,7 @@ $something['aze'] = 'rty';
 $test->update(Query::match('foo','bar'), $something);
 
 // Deleting a record works the same way
-$test->update(Query::match('foo','bar'));
+$test->delete(Query::match('foo','bar'));
 
 // If you want flush changes to filesystem, just use flush
 $test->flush();
