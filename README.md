@@ -2,11 +2,19 @@
 
 [![Build Status](https://travis-ci.org/dav-m85/json-db.png?branch=master)](https://travis-ci.org/dav-m85/json-db)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dav-m85/json-db/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dav-m85/json-db/?branch=master)
+[![Packagist latest](https://img.shields.io/packagist/v/dav-m85/json-db.svg)](https://packagist.org/packages/dav-m85/json-db)
+
 
 json-db is a document oriented database using json files as storage.
 
 It tries to implement concurrency proofness with unit of work mechanism, but has not been tested yet in heavy
 load environments. Documents are retrieved with a query pattern.
+
+## Installation
+
+```
+composer require dav-m85/json-db
+```
 
 ## Usage
 
