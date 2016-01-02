@@ -1,10 +1,10 @@
 {
-    "name": "dav-m85/json-db",
+    "name": "zorca/json-db",
     "type": "library",
-    "description": "Use a json file as a document oriented database",
+    "description": "PHP flat-file database to store data with JSON",
     "keywords": ["json","database"],
     "homepage": "http://github.com/dav-m85/json-db",
-    "version": "0.1.0",
+    "version": "2.0.0",
     "license": "MIT",
     "authors": [
         {
