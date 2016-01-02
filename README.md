@@ -1,7 +1,7 @@
 #json-db
 
 [![Build Status](https://travis-ci.org/dav-m85/json-db.png?branch=master)](https://travis-ci.org/zorca/json-db)
-[![Packagist latest](https://img.shields.io/packagist/v/dav-m85/json-db.svg)](https://packagist.org/packages/zorca/json-db)
+[![Packagist latest](https://img.shields.io/packagist/v/zorca/json-db.svg)](https://packagist.org/packages/zorca/json-db)
 
 
 json-db is a document oriented database using json files as storage.
